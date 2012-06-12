@@ -7,8 +7,6 @@
 #				  test_mqrspec test_split test_monkey test_mask test_mmask \
 #				  create_frame_pattern create_mqr_frame_pattern \
 #				  $(sdlPROGRAMS)
-#noinst_LIBRARIES = libdecoder.a
-#DECODER_LIBS = libdecoder.a $(LIBICONV)
 #noinst_HEADERS = common.h
 #if HAVE_LIBPTHREAD
 #noinst_PROGRAMS += pthread_qrencode
@@ -24,6 +22,8 @@ add_library (decoder
   decoder.h
   )
 
+target_link_libraries (decoder qrencode ${ICONV_LIBRARIES})
+
 foreach (test_program
     test_qrinput
     test_bitstream
@@ -38,13 +38,16 @@ foreach (test_program
     prof_qrencode
     pthread_qrencode
     )
-
+  
+  ## Compiler instructions
   add_executable(${test_program} ${test_program}.c)
+  
+  ## Linker instructions
+  target_link_libraries (${test_program} decoder ${ICONV_LIBRARIES})
 
-  target_link_libraries (${test_program} decoder qrencode)
-
+  ## Add test
   add_test (${test_program} ${test_program})
-
+  
 endforeach (test_program)
 
 #pthread_qrencode_SOURCES = .c
