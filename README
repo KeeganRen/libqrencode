@@ -68,6 +68,12 @@ b) ... using CMake
   cmake ..
   make install
 
+  By default library and header files are installed into /usr/local/lib and 
+  /usr/local/include. You can change the destination directory by providing
+  the appropriate option during the configuration step, i.e.
+
+  cmake -DCMAKE_INSTALL_PREFIX=<prefix> ..
+
 
 USAGE
 =====
