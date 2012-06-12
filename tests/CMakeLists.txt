@@ -43,6 +43,8 @@ foreach (test_program
 
   target_link_libraries (${test_program} decoder qrencode)
 
+  add_test (${test_program} ${test_program})
+
 endforeach (test_program)
 
 #pthread_qrencode_SOURCES = .c
