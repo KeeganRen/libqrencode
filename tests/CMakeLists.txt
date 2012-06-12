@@ -1,6 +1,32 @@
 
 include_directories (${CMAKE_CURRENT_SOURCE_DIR})
 
+## ==============================================================================
+##
+##  Instructions to build and run the test programs
+##
+##  1. libdecoder library for common functionality.
+##  2. Support programs to create test patterns.
+##  3. Programs which are part of the test suite.
+##
+## ==============================================================================
+
+##____________________________________________________________________
+## Library: libdecoder
+
+add_library (decoder
+  decoder.c
+  decoder.h
+  )
+
+if (ICONV_LIBRARIES)
+  set (decoder_link_libraries qrencode ${ICONV_LIBRARIES})
+else (ICONV_LIBRARIES)
+  set (decoder_link_libraries qrencode)
+endif (ICONV_LIBRARIES)
+
+target_link_libraries (decoder ${decoder_link_libraries})
+
 ##____________________________________________________________________
 ## Programs to create test patterns
 
@@ -17,21 +43,9 @@ if (PNG_LIBRARIES)
     add_test (create_mqr_frame_pattern create_mqr_frame_pattern)
     
 endif (PNG_LIBRARIES)
+
 ##____________________________________________________________________
-## Library: libdecoder
-
-add_library (decoder
-  decoder.c
-  decoder.h
-  )
-
-if (ICONV_LIBRARIES)
-  set (decoder_link_libraries qrencode ${ICONV_LIBRARIES})
-else (ICONV_LIBRARIES)
-  set (decoder_link_libraries qrencode)
-endif (ICONV_LIBRARIES)
-
-target_link_libraries (decoder ${decoder_link_libraries})
+## Test programs
 
 foreach (test_program
     test_qrinput
