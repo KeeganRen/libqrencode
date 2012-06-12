@@ -95,14 +95,6 @@ if (CMAKE_THREAD_LIBS_INIT)
 
 endif (CMAKE_THREAD_LIBS_INIT)
 
-#create_frame_pattern_SOURCES = create_frame_pattern.c
-#create_frame_pattern_CFLAGS = $(png_CFLAGS)
-#create_frame_pattern_LDADD = ../libqrencode.la $(png_LIBS)
-
-#create_mqr_frame_pattern_SOURCES = create_mqr_frame_pattern.c
-#create_mqr_frame_pattern_CFLAGS = $(png_CFLAGS)
-#create_mqr_frame_pattern_LDADD = ../libqrencode.la $(png_LIBS)
-
 #if HAVE_SDL
 #view_qrcode_SOURCES = view_qrcode.c
 #view_qrcode_CFLAGS= $(SDL_CFLAGS)
