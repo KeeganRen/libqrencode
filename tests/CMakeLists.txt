@@ -1,18 +1,3 @@
-#if HAVE_SDL
-#sdlPROGRAMS = view_qrcode
-#endif
-
-#noinst_PROGRAMS = test_qrinput test_bitstream test_estimatebit \
-#				  test_qrspec test_rs test_qrencode prof_qrencode \
-#				  test_mqrspec test_split test_monkey test_mask test_mmask \
-#				  create_frame_pattern create_mqr_frame_pattern \
-#				  $(sdlPROGRAMS)
-#noinst_HEADERS = common.h
-#if HAVE_LIBPTHREAD
-#noinst_PROGRAMS += pthread_qrencode
-#endif
-
-#EXTRA_DIST = frame
 
 include_directories (${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -21,17 +6,16 @@ include_directories (${CMAKE_CURRENT_SOURCE_DIR})
 
 if (PNG_LIBRARIES)
 
-  foreach (frame_pattern
-      create_frame_pattern
-      create_mqr_frame_pattern
-      )
+    ## create_frame_pattern
+    add_executable (create_frame_pattern create_frame_pattern.c)
+    target_link_libraries (create_frame_pattern qrencode ${PNG_LIBRARIES})
+    add_test (create_frame_pattern create_frame_pattern frame)
     
-    add_executable (${frame_pattern} ${frame_pattern}.c)
-    target_link_libraries (${frame_pattern} qrencode ${PNG_LIBRARIES})
-    add_test (${frame_pattern} ${frame_pattern})
+    ## create_mqr_frame_pattern
+    add_executable (create_mqr_frame_pattern create_mqr_frame_pattern.c)
+    target_link_libraries (create_mqr_frame_pattern qrencode ${PNG_LIBRARIES})
+    add_test (create_mqr_frame_pattern create_mqr_frame_pattern)
     
-  endforeach (frame_pattern)
-
 endif (PNG_LIBRARIES)
 ##____________________________________________________________________
 ## Library: libdecoder
