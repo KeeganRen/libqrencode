@@ -27,7 +27,7 @@ set (PROJECT_VERSION "${MAJOR_VERSION}.${MINOR_VERSION}.${MICRO_VERSION}")
 ##
 ## ==============================================================================
 
-option (WITH_TESTS "Build test programs?"  NO  )
+option (WITH_TESTS "Build test programs?"  YES )
 option (WITH_TOOLS "Build utility tools?"  YES )
 
 ## ==============================================================================
@@ -61,13 +61,19 @@ check_include_file (HAVE_STRING_H    string.h   )
 include_directories (
   ${PROJECT_SOURCE_DIR}
   ${PROJECT_BINARY_DIR}
-  ${PNG_INCLUDE_DIR}
   )
+
+if (PNG_INCLUDE_DIR)
+  include_directories (${PNG_INCLUDE_DIR})
+endif (PNG_INCLUDE_DIR)
 
 ##____________________________________________________________________
 ## Propagation of configuration settings
 
-find_file (HAVE_CONFIGURE_H_IN configure.h.in)
+find_file (HAVE_CONFIGURE_H_IN 
+  NAMES configure.h.in config.h.in
+  PATHS ${PROJECT_SOURCE_DIR}
+  )
 
 if (HAVE_CONFIGURE_H_IN)
   
@@ -87,12 +93,11 @@ else (HAVE_CONFIGURE_H_IN)
   add_definitions (-DMICRO_VERSION=${MICRO_VERSION})
   add_definitions (-DVERSION="${PROJECT_VERSION}")
   
-  ## Define to 'static' if no test programs will be compiled.
-  if (NOT WITH_TESTS)
-    add_definitions (-D__STATIC=static)
-  endif (NOT WITH_TESTS)
-  
 endif (HAVE_CONFIGURE_H_IN)
+
+if (WITH_TESTS)
+  add_definitions (-DWITH_TESTS)
+endif (WITH_TESTS)
 
 ##____________________________________________________________________
 ## Build 'libqrencode' library
@@ -112,6 +117,7 @@ add_library (qrencode
 
 set_target_properties (qrencode
   PROPERTIES
+  FLAGS "-D__STATIC=static"
   LDFLAGS "-version-number ${PROJECT_VERSION}"
 )
 
