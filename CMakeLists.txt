@@ -80,11 +80,17 @@ if (HAVE_CONFIGURE_H_IN)
   ## Process the input file ...
   configure_file (
     ${HAVE_CONFIGURE_H_IN}
-    ${PROJECT_BINARY_DIR}/config.h
+    ${PROJECT_SOURCE_DIR}/config.h
     )
 
   ## ... and register it to the compiler
   add_definitions (-DHAVE_CONFIG_H)
+
+  ## Add generated header file to 'clean' target
+  set_property (DIRECTORY
+    APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES
+    ${PROJECT_SOURCE_DIR}/config.h
+    )
   
 else (HAVE_CONFIGURE_H_IN)
 
@@ -166,7 +172,12 @@ endif (WITH_TOOLS)
 ## Build test programs
 
 if (WITH_TESTS)
+  
+  include (CTest)
+  enable_testing()
+  
   add_subdirectory (tests)
+  
 endif (WITH_TESTS)
 
 ## ==============================================================================
