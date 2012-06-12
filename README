@@ -41,19 +41,32 @@ install programs using SDL or PNG.
 
 Compile & install
 -----------------
-Just try
 
-./configure
-make
-make install
+a) ... using Autotools
 
-This compiles and installs the library and header file to the appropriate
-directories. By default, /usr/local/lib and /usr/local/include. You can change
-the destination directory by passing some options to the configure script.
-Run "./configure --help" to see the list of options.
+  Just try
 
-It also installs a binary "qrencode" to /usr/local/bin. If you want not to
-install it, give "--without-tools" option to the configure script.
+  ./configure
+  make
+  make install
+
+  This compiles and installs the library and header file to the appropriate
+  directories. By default, /usr/local/lib and /usr/local/include. You can change
+  the destination directory by passing some options to the configure script.
+  Run "./configure --help" to see the list of options.
+
+  It also installs a binary "qrencode" to /usr/local/bin. If you want not to
+  install it, give "--without-tools" option to the configure script.
+
+b) ... using CMake
+
+  For an out-of-source build create a separate build directory which within
+  to carry out the compile
+
+  mkdir build
+  cd build
+  cmake ..
+  make install
 
 
 USAGE
