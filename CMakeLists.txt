@@ -1,0 +1,213 @@
+
+## ==============================================================================
+##
+##  CMake project settings
+##
+## ==============================================================================
+
+## Name of the project handled by CMake
+project (QRencode C)
+
+## Minimum required version of CMake to configure the project
+cmake_minimum_required (VERSION 2.8)
+
+## Enforced CMake policy
+cmake_policy (VERSION 2.8)
+
+## Project version number
+
+set (MAJOR_VERSION "3")
+set (MINOR_VERSION "3")
+set (MICRO_VERSION "1")
+set (PROJECT_VERSION "${MAJOR_VERSION}.${MINOR_VERSION}.${MICRO_VERSION}")
+
+## ==============================================================================
+##
+##  Configuration options
+##
+## ==============================================================================
+
+option (WITH_TESTS "Build test programs?"  NO  )
+option (WITH_TOOLS "Build utility tools?"  YES )
+
+## ==============================================================================
+##
+##  System inspection
+##
+## ==============================================================================
+
+find_package (Doxygen)
+find_package (PNG)
+find_package (Threads)
+
+## Check for system include files
+
+include (CheckIncludeFile)
+
+check_include_file (HAVE_DLFCN_H     dlfcn.h    )
+check_include_file (HAVE_INTTYPES_H  inttypes.h )
+check_include_file (HAVE_MEMORY_H    memory.h   )
+check_include_file (HAVE_STDINT_H    stdint.h   )
+check_include_file (HAVE_STDLIB_H    stdlib.h   )
+check_include_file (HAVE_STRINGS_H   strings.h  )
+check_include_file (HAVE_STRING_H    string.h   )
+
+## ==============================================================================
+##
+##  Build instructions
+##
+## ==============================================================================
+
+include_directories (
+  ${PROJECT_SOURCE_DIR}
+  ${PROJECT_BINARY_DIR}
+  ${PNG_INCLUDE_DIR}
+  )
+
+##____________________________________________________________________
+## Propagation of configuration settings
+
+find_file (HAVE_CONFIGURE_H_IN configure.h.in)
+
+if (HAVE_CONFIGURE_H_IN)
+  
+  ## Process the input file ...
+  configure_file (
+    ${HAVE_CONFIGURE_H_IN}
+    ${PROJECT_BINARY_DIR}/config.h
+    )
+
+  ## ... and register it to the compiler
+  add_definitions (-DHAVE_CONFIG_H)
+  
+else (HAVE_CONFIGURE_H_IN)
+
+  add_definitions (-DMAJOR_VERSION=${MAJOR_VERSION})
+  add_definitions (-DMINOR_VERSION=${MINOR_VERSION})
+  add_definitions (-DMICRO_VERSION=${MICRO_VERSION})
+  add_definitions (-DVERSION="${PROJECT_VERSION}")
+  
+  ## Define to 'static' if no test programs will be compiled.
+  if (NOT WITH_TESTS)
+    add_definitions (-D__STATIC=static)
+  endif (NOT WITH_TESTS)
+  
+endif (HAVE_CONFIGURE_H_IN)
+
+##____________________________________________________________________
+## Build 'libqrencode' library
+
+add_library (qrencode
+  qrencode.c
+  qrencode_inner.h
+  qrinput.c
+  bitstream.c
+  qrspec.c
+  rscode.c
+  split.c
+  mask.c
+  mqrspec.c
+  mmask.c
+  )
+
+set_target_properties (qrencode
+  PROPERTIES
+  LDFLAGS "-version-number ${PROJECT_VERSION}"
+)
+
+## Installation instructions
+
+install (
+  TARGETS qrencode
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  )
+
+#EXTRA_DIST = libqrencode.pc.in autogen.sh configure.ac acinclude.m4 \
+#			 Makefile.am tests/Makefile.am qrencode.spec.in qrencode.spec \
+#			 qrencode.1.in Doxyfile tests/test_all.sh
+
+##____________________________________________________________________
+## Build utility tools
+
+if (WITH_TOOLS)
+
+  ## Compiler instructions
+  add_executable (qrencode_app qrenc.c)
+
+  ## Linker instructions
+  target_link_libraries (qrencode_app
+    qrencode
+    ${PNG_LIBRARIES}
+    )
+
+  ## Extra target properties
+  set_target_properties (qrencode_app
+    PROPERTIES
+    OUTPUT_NAME qrencode)
+
+  ## Installation instructions
+  install (
+    TARGETS qrencode_app
+    RUNTIME DESTINATION bin
+    RENAME qrencode
+    )
+
+endif (WITH_TOOLS)
+
+##____________________________________________________________________
+## Build test programs
+
+if (WITH_TESTS)
+  add_subdirectory (tests)
+endif (WITH_TESTS)
+
+## ==============================================================================
+##
+##  Documentation
+##
+## ==============================================================================
+
+if (DOXYGEN_EXECUTABLE)
+  
+  ## Configuration file for Doxygen
+  configure_file (
+    ${PROJECT_SOURCE_DIR}/Doxyfile.in
+    ${PROJECT_BINARY_DIR}/Doxyfile
+    )
+
+  ## Target to build documentation
+  add_custom_target (doc
+    COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
+    DEPENDS ${PROJECT_BINARY_DIR}/Doxyfile
+    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+    )
+  
+endif (DOXYGEN_EXECUTABLE)
+
+## ==============================================================================
+##
+##  Configuration summary
+##
+## ==============================================================================
+
+message (STATUS "------------------------------------------------------------"   )
+message (STATUS "[QRencode] Configuration summary."                              )
+message (STATUS "------------------------------------------------------------ "  )
+message (STATUS " System configuration:"                                         )
+message (STATUS " .. Processor type .............. = ${CMAKE_SYSTEM_PROCESSOR}"  )
+message (STATUS " .. CMake executable ............ = ${CMAKE_COMMAND}"           )
+message (STATUS " .. CMake version ............... = ${CMAKE_VERSION}"           )
+message (STATUS " .. System name ................. = ${CMAKE_SYSTEM}"            )
+message (STATUS " .. C++ compiler ................ = ${CMAKE_CXX_COMPILER}"      )
+message (STATUS " .. C compiler .................. = ${CMAKE_C_COMPILER}"        )
+message (STATUS " .. size(void*) ................. = ${CMAKE_SIZEOF_VOID_P}"     )
+message (STATUS " Dependencies:"                                                 )
+message (STATUS " .. Doxygen ..................... = ${DOXYGEN_EXECUTABLE}"      )
+message (STATUS " .. Thread library of the system  = ${CMAKE_THREAD_LIBS_INIT}"  )
+message (STATUS " Project configuration:"                                        )
+message (STATUS " .. Build test programs? ........ = ${WITH_TESTS}"              )
+message (STATUS " .. Build utility tools? ........ = ${WITH_TOOLS}"              )
+message (STATUS " .. Installation prefix ......... = ${CMAKE_INSTALL_PREFIX}"    )
+message (STATUS "------------------------------------------------------------ "  )
