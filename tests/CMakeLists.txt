@@ -42,7 +42,6 @@ foreach (test_program
     test_monkey
     test_mask
     prof_qrencode
-    pthread_qrencode
     )
   
   ## Compiler instructions
@@ -56,8 +55,21 @@ foreach (test_program
   
 endforeach (test_program)
 
-#pthread_qrencode_SOURCES = .c
-#pthread_qrencode_LDADD = ../libqrencode.la $(LIBPTHREAD)
+##____________________________________________________________________
+## Programs that require pthread
+
+if (CMAKE_THREAD_LIBS_INIT)
+
+  add_executable (pthread_qrencode pthread_qrencode.c)
+
+  target_link_libraries (pthread_qrencode decoder ${decoder_link_libraries})
+
+  set_target_properties (pthread_qrencode
+    PROPERTIES
+    LINK_FLAGS "${CMAKE_THREAD_LIBS_INIT}"
+    )
+
+endif (CMAKE_THREAD_LIBS_INIT)
 
 #create_frame_pattern_SOURCES = create_frame_pattern.c
 #create_frame_pattern_CFLAGS = $(png_CFLAGS)
