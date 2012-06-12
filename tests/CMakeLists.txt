@@ -16,17 +16,31 @@
 
 include_directories (${CMAKE_CURRENT_SOURCE_DIR})
 
+##____________________________________________________________________
+## Programs to create test patterns
+
+if (PNG_LIBRARIES)
+
+  add_executable (create_frame_pattern create_frame_pattern.c)
+  target_link_libraries (create_frame_pattern qrencode ${PNG_LIBRARIES})
+
+  add_executable (create_mqr_frame_pattern create_mqr_frame_pattern.c)
+  target_link_libraries (create_mqr_frame_pattern qrencode ${PNG_LIBRARIES})
+
+endif (PNG_LIBRARIES)
+##____________________________________________________________________
+## Library: libdecoder
+
+add_library (decoder
+  decoder.c
+  decoder.h
+  )
+
 if (ICONV_LIBRARIES)
   set (decoder_link_libraries qrencode ${ICONV_LIBRARIES})
 else (ICONV_LIBRARIES)
   set (decoder_link_libraries qrencode)
 endif (ICONV_LIBRARIES)
-
-## Library: libdecoder
-add_library (decoder
-  decoder.c
-  decoder.h
-  )
 
 target_link_libraries (decoder ${decoder_link_libraries})
 
