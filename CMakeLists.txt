@@ -36,6 +36,8 @@ option (WITH_TOOLS "Build utility tools?"  YES )
 ##
 ## ==============================================================================
 
+## Standard header files
+
 find_package (Doxygen)
 find_package (PNG)
 find_package (Threads)
@@ -52,6 +54,30 @@ check_include_file (HAVE_STDLIB_H    stdlib.h   )
 check_include_file (HAVE_STRINGS_H   strings.h  )
 check_include_file (HAVE_STRING_H    string.h   )
 
+## Iconv library
+
+  if (NOT ICONV_ROOT_DIR)
+    ## We need some extra instruction here, in case inspection is done on
+    ## Mac OS X: apparently the default /usr/lib/libiconv is missing some of
+    ## the symbols, hence we prefer using the library version as installed
+    ## via MacPorts.
+    if (APPLE)
+      set (ICONV_ROOT_DIR /opt/local)
+    else (APPLE)
+      set (ICONV_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
+    endif (APPLE)
+  endif (NOT ICONV_ROOT_DIR)
+
+find_path (ICONV_INCLUDES iconv.h
+  HINTS ${ICONV_ROOT_DIR} ${CMAKE_INSTALL_PREFIX}
+  PATH_SUFFIXES include include/iconv
+  )
+
+find_library (ICONV_LIBRARIES iconv
+  HINTS ${ICONV_ROOT_DIR} ${CMAKE_INSTALL_PREFIX}
+  PATH_SUFFIXES lib
+  )
+
 ## ==============================================================================
 ##
 ##  Build instructions
@@ -66,6 +92,10 @@ include_directories (
 if (PNG_INCLUDE_DIR)
   include_directories (${PNG_INCLUDE_DIR})
 endif (PNG_INCLUDE_DIR)
+
+if (ICONV_INCLUDES)
+  include_directories (${ICONV_INCLUDES})
+endif (ICONV_INCLUDES)
 
 ##____________________________________________________________________
 ## Propagation of configuration settings
@@ -123,8 +153,8 @@ add_library (qrencode
 
 set_target_properties (qrencode
   PROPERTIES
-  FLAGS "-D__STATIC=static"
-  LDFLAGS "-version-number ${PROJECT_VERSION}"
+  COMPILE_FLAGS "-Wall -g"
+  LINK_FLAGS "-version-number ${PROJECT_VERSION}"
 )
 
 ## Installation instructions
@@ -223,6 +253,8 @@ message (STATUS " .. size(void*) ................. = ${CMAKE_SIZEOF_VOID_P}"    
 message (STATUS " Dependencies:"                                                 )
 message (STATUS " .. Doxygen ..................... = ${DOXYGEN_EXECUTABLE}"      )
 message (STATUS " .. Thread library of the system  = ${CMAKE_THREAD_LIBS_INIT}"  )
+message (STATUS " .. Iconv includes .............. = ${ICONV_INCLUDES}"          )
+message (STATUS " .. Iconv library ............... = ${ICONV_LIBRARIES}"         )
 message (STATUS " Project configuration:"                                        )
 message (STATUS " .. Build test programs? ........ = ${WITH_TESTS}"              )
 message (STATUS " .. Build utility tools? ........ = ${WITH_TOOLS}"              )
