@@ -16,13 +16,19 @@
 
 include_directories (${CMAKE_CURRENT_SOURCE_DIR})
 
+if (ICONV_LIBRARIES)
+  set (decoder_link_libraries qrencode ${ICONV_LIBRARIES})
+else (ICONV_LIBRARIES)
+  set (decoder_link_libraries qrencode)
+endif (ICONV_LIBRARIES)
+
 ## Library: libdecoder
 add_library (decoder
   decoder.c
   decoder.h
   )
 
-target_link_libraries (decoder qrencode ${ICONV_LIBRARIES})
+target_link_libraries (decoder ${decoder_link_libraries})
 
 foreach (test_program
     test_qrinput
@@ -43,7 +49,7 @@ foreach (test_program
   add_executable(${test_program} ${test_program}.c)
   
   ## Linker instructions
-  target_link_libraries (${test_program} decoder ${ICONV_LIBRARIES})
+  target_link_libraries (${test_program} decoder ${decoder_link_libraries})
 
   ## Add test
   add_test (${test_program} ${test_program})
