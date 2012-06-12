@@ -21,11 +21,16 @@ include_directories (${CMAKE_CURRENT_SOURCE_DIR})
 
 if (PNG_LIBRARIES)
 
-  add_executable (create_frame_pattern create_frame_pattern.c)
-  target_link_libraries (create_frame_pattern qrencode ${PNG_LIBRARIES})
-
-  add_executable (create_mqr_frame_pattern create_mqr_frame_pattern.c)
-  target_link_libraries (create_mqr_frame_pattern qrencode ${PNG_LIBRARIES})
+  foreach (frame_pattern
+      create_frame_pattern
+      create_mqr_frame_pattern
+      )
+    
+    add_executable (${frame_pattern} ${frame_pattern}.c)
+    target_link_libraries (${frame_pattern} qrencode ${PNG_LIBRARIES})
+    add_test (${frame_pattern} ${frame_pattern})
+    
+  endforeach (frame_pattern)
 
 endif (PNG_LIBRARIES)
 ##____________________________________________________________________
@@ -64,8 +69,15 @@ foreach (test_program
   ## Linker instructions
   target_link_libraries (${test_program} decoder ${decoder_link_libraries})
 
-  ## Add test
+  ## Add test ...
   add_test (${test_program} ${test_program})
+
+  ## ... and its dependencies
+  set_tests_properties(${test_program}
+    PROPERTIES
+    DEPENDS create_frame_pattern
+    DEPENDS create_mqr_frame_pattern
+    )
   
 endforeach (test_program)
 
@@ -98,3 +110,4 @@ endif (CMAKE_THREAD_LIBS_INIT)
 #view_qrcode_CFLAGS= $(SDL_CFLAGS)
 #view_qrcode_LDADD = ../libqrencode.la $(SDL_LIBS)
 #endif
+
