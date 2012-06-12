@@ -129,11 +129,11 @@ else (HAVE_CONFIGURE_H_IN)
   add_definitions (-DMICRO_VERSION=${MICRO_VERSION})
   add_definitions (-DVERSION="${PROJECT_VERSION}")
   
+  if (WITH_TESTS)
+    add_definitions (-DWITH_TESTS)
+  endif (WITH_TESTS)
+  
 endif (HAVE_CONFIGURE_H_IN)
-
-if (WITH_TESTS)
-  add_definitions (-DWITH_TESTS)
-endif (WITH_TESTS)
 
 ##____________________________________________________________________
 ## Build 'libqrencode' library
@@ -154,7 +154,7 @@ add_library (qrencode
 set_target_properties (qrencode
   PROPERTIES
   COMPILE_FLAGS "-Wall -g"
-  LINK_FLAGS "-version-number ${PROJECT_VERSION}"
+  LINK_FLAGS "-DPIC -version-number ${PROJECT_VERSION}"
 )
 
 ## Installation instructions
