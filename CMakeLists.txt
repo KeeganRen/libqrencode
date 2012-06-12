@@ -255,6 +255,8 @@ message (STATUS " .. Doxygen ..................... = ${DOXYGEN_EXECUTABLE}"     
 message (STATUS " .. Thread library of the system  = ${CMAKE_THREAD_LIBS_INIT}"  )
 message (STATUS " .. Iconv includes .............. = ${ICONV_INCLUDES}"          )
 message (STATUS " .. Iconv library ............... = ${ICONV_LIBRARIES}"         )
+message (STATUS " .. PNG includes ................ = ${PNG_INCLUDE_DIR}"         )
+message (STATUS " .. PNG library ................. = ${PNG_LIBRARIES}"           )
 message (STATUS " Project configuration:"                                        )
 message (STATUS " .. Build test programs? ........ = ${WITH_TESTS}"              )
 message (STATUS " .. Build utility tools? ........ = ${WITH_TOOLS}"              )
