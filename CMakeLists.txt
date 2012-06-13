@@ -175,27 +175,35 @@ install (
 
 if (WITH_TOOLS)
 
-  ## Compiler instructions
-  add_executable (qrencode_app qrenc.c)
+  if (PNG_LIBRARIES)
+    
+    ## Compiler instructions
+    add_executable (qrencode_app qrenc.c)
+    
+    ## Linker instructions
+    target_link_libraries (qrencode_app
+      qrencode
+      ${PNG_LIBRARIES}
+      )
+    
+    ## Extra target properties
+    set_target_properties (qrencode_app
+      PROPERTIES
+      OUTPUT_NAME qrencode)
+    
+    ## Installation instructions
+    install (
+      TARGETS qrencode_app
+      RUNTIME DESTINATION bin
+      RENAME qrencode
+      )
+    
+  else (PNG_LIBRARIES)
 
-  ## Linker instructions
-  target_link_libraries (qrencode_app
-    qrencode
-    ${PNG_LIBRARIES}
-    )
-
-  ## Extra target properties
-  set_target_properties (qrencode_app
-    PROPERTIES
-    OUTPUT_NAME qrencode)
-
-  ## Installation instructions
-  install (
-    TARGETS qrencode_app
-    RUNTIME DESTINATION bin
-    RENAME qrencode
-    )
-
+    message (STATUS "Unable to build tool qrencode - missing PNG library!")
+    
+  endif (PNG_LIBRARIES)
+  
 endif (WITH_TOOLS)
 
 ##____________________________________________________________________
