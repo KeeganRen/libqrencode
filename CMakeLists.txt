@@ -78,6 +78,13 @@ find_library (ICONV_LIBRARIES iconv
   PATH_SUFFIXES lib
   )
 
+## Memory checker
+
+find_program (MEMORYCHECK_COMMAND
+    NAMES purify valgrind boundscheck
+    PATH_SUFFIXES bin
+    )
+
 ## ==============================================================================
 ##
 ##  Build instructions
