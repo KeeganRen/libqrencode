@@ -201,6 +201,7 @@ if (WITH_TOOLS)
   else (PNG_LIBRARIES)
 
     message (STATUS "Unable to build tool qrencode - missing PNG library!")
+    set (WITH_TOOLS NO)
     
   endif (PNG_LIBRARIES)
   
