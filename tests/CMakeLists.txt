@@ -31,17 +31,26 @@ target_link_libraries (decoder ${decoder_link_libraries})
 ## Programs to create test patterns
 
 if (PNG_LIBRARIES)
-
-    ## create_frame_pattern
-    add_executable (create_frame_pattern create_frame_pattern.c)
-    target_link_libraries (create_frame_pattern qrencode ${PNG_LIBRARIES})
-    add_test (create_frame_pattern create_frame_pattern frame)
-    
-    ## create_mqr_frame_pattern
-    add_executable (create_mqr_frame_pattern create_mqr_frame_pattern.c)
-    target_link_libraries (create_mqr_frame_pattern qrencode ${PNG_LIBRARIES})
-    add_test (create_mqr_frame_pattern create_mqr_frame_pattern)
-    
+  
+  ## create_frame_pattern
+  add_executable (create_frame_pattern create_frame_pattern.c)
+  target_link_libraries (create_frame_pattern qrencode ${PNG_LIBRARIES})
+  add_test (create_frame_pattern create_frame_pattern frame)
+  
+  ## create_mqr_frame_pattern
+  add_executable (create_mqr_frame_pattern create_mqr_frame_pattern.c)
+  target_link_libraries (create_mqr_frame_pattern qrencode ${PNG_LIBRARIES})
+  add_test (create_mqr_frame_pattern create_mqr_frame_pattern)
+  
+  ## test_qrspec
+  add_executable (test_qrspec test_qrspec.c)
+  target_link_libraries (test_qrspec qrencode decoder ${PNG_LIBRARIES})
+  add_test (test_qrspec test_qrspec)
+  set_tests_properties(test_qrspec
+    PROPERTIES
+    DEPENDS create_frame_pattern
+    )
+  
 endif (PNG_LIBRARIES)
 
 ##____________________________________________________________________
@@ -51,7 +60,6 @@ foreach (test_program
     test_qrinput
     test_bitstream
     test_estimatebit
-    test_qrspec
     test_mqrspec
     test_rs
     test_qrencode
